@@ -2,6 +2,10 @@
 #include "WorldGenerator.h"
 #include <iostream>
 
-World::World(){
-    WorldGenerator::safePath(this->map);
+int main() {
+    World world; 
+    
+
+
+    return 0;
 }
