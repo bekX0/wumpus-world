@@ -19,6 +19,7 @@ class WorldGenerator{
         static void setLocationAs(std::vector<std::vector<bool>>&, std::pair<int, int>, bool);
         static bool isWayValid(std::vector<std::vector<bool>>&, std::vector<std::vector<bool>>&, std::pair<int, int>);
         static std::pair<int, int> nextCell(std::pair<int, int> curr, int direction);
+        static bool includes(std::pair<int, int>[], int size, std::pair<int, int>);
     public:
         static World newWorld();
         static void safePath(CELL map[BORDER][BORDER]); 

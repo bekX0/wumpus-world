@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <time.h>
 #define BORDER 5
+#define PITS 3
 /*
 Rules:
 - 1 Wumpus for a map.
@@ -98,6 +99,16 @@ std::pair<int, int> WorldGenerator::nextCell(std::pair<int, int> curr, int direc
     }
 }
 
+bool WorldGenerator::includes(std::pair<int, int> array[], int size, std::pair<int, int> value){
+    if(size == 0) return false;
+    for(int i=0; i < size; ++i){
+        if(array[i] == value){
+            return true;
+        }
+    }
+    return false;
+}
+
 World WorldGenerator::newWorld()
 {
     World temp;
@@ -184,6 +195,41 @@ void WorldGenerator::safePath(CELL (*map)[BORDER])
         }
 
 
-            
+        //select wumpus and pits
+        //! if cells that next to start point can't have any pit or wumpus these codes can be refactored.
+        // Wumpus
+        //checklist -> path, (0,0)
+        std::pair<int, int> locWumpus;
+        
+        // loop while path includes generated cell and equal (0,0)
+        do{
+            locWumpus.first = generateRandomNumber(BORDER);
+            locWumpus.second = generateRandomNumber(BORDER);
+        }while(
+            includes(path, steps, locWumpus) &&
+            locWumpus == std::make_pair(0,0)
+        );
+
+        // pits
+        //checklist -> path, (0,0), wumpus
+        std::pair<int, int> locPits[PITS];
+
+        for(int i=0; i < PITS; ++i){
+        do{
+            locPits[i].first = generateRandomNumber(BORDER);
+            locPits[i].second = generateRandomNumber(BORDER);
+        }while(
+            includes(path, steps, locPits[i]) &&
+            locPits[i] == std::make_pair(0,0) &&
+            includes(locPits, i, locPits[i])
+        );
+        }
+
+
+
+        std::cout << "Wumpus: " << locWumpus.first << "," << locWumpus.second << std::endl;
+        for(int i=0; i < PITS; ++i){
+            std::cout << "Pit" << i+1 << ": " << locPits[i].first << "," << locPits[i].second << std::endl; 
+        } 
     }
 }
