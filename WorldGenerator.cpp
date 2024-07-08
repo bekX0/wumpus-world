@@ -174,5 +174,16 @@ void WorldGenerator::safePath(CELL (*map)[BORDER])
 
         resetCompass(compass);
         locCurrent = nextCell(locCurrent, direction);
+
+        // save the path
+        int steps = stack.size();
+        std::pair<int, int> path[steps];
+        for(int i=steps-1; !stack.empty(); --i){
+            path[i] = stack.top();
+            stack.pop();
+        }
+
+
+            
     }
 }
