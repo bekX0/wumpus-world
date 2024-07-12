@@ -9,11 +9,12 @@
 
 #define BORDER 5
 
-AGENTCELL Agent::decisionMaker(std::vector<std::pair<AGENTCELL, char>> Cell_and_Direction)
+std::pair<int, int> Agent::decisionMaker(std::vector<std::pair<AGENTCELL, char>> Cell_and_Direction, int x, int y)
 {
     AGENTCELL cell;
-    int score;
-    int max;
+    int score = 0;
+    int max = 0;
+    char direction = 'R';
     std::vector<std::pair<AGENTCELL, int>> Cell_and_Score;
 
     for(int i=0; i<Cell_and_Direction.size(); i++)
@@ -32,10 +33,33 @@ AGENTCELL Agent::decisionMaker(std::vector<std::pair<AGENTCELL, char>> Cell_and_
         {
             max = Cell_and_Score[i].second;
             cell = Cell_and_Score[i].first;
+            direction = Cell_and_Direction[i].second;
         }
     }
 
-    return cell;
+    switch (direction)
+    {
+    case 'R':
+        x = x;
+        y = y+1;
+        break;
+    case 'L':
+        x = x;
+        y = y-1;
+        break;
+    case 'A':
+        x = x-1;
+        y = y;
+        break;
+    case 'B':
+        x = x+1;
+        y = y;
+        break;
+    default:
+        break;
+    }
+    
+    return std::make_pair(x,y);
 }
 
 int Agent::decisionScore(AGENTCELL check)
@@ -73,13 +97,21 @@ int Agent::decisionScore(AGENTCELL check)
     {
         total = total + 50;
     }
-    if(check.hasGlitter == true)
+    if(check.isSafe == true && check.isVisited == false && check.isRecentlyVisited == false)
     {
-        total = total + 50;
+        total = total + 100;
+        if(check.hasGlitter == true)
+        {
+            total = total + 50;
+        }
     }
-    if(check.isSafe == true && check.isVisited == false)
+    if(check.isSafe == true && check.isVisited == true && check.isRecentlyVisited == true)
     {
-        total = total + 50;
+        total = total - 75;
+        if(check.hasGlitter == true)
+        {
+            total = total + 50;
+        }
     }
     return total;
 }
@@ -87,16 +119,37 @@ int Agent::decisionScore(AGENTCELL check)
 void Agent::predictionUpdate(AGENTCELL predicted, int x, int y)
 {
         if(y<BORDER-1) //if the Agent is not at LAST column
-        updateKnowledge(predicted, x, y+1); //predict right AGENTCELL
-
+        {
+            if(KnownCells[x-1][y].isSafe==false)
+            {
+                updateKnowledge(predicted, x, y+1); //predict right AGENTCELL
+            }
+        }
+        
         if(y>0) //if the Agent is not at FIRST column
-        updateKnowledge(predicted, x, y-1); //predict left AGENTCELL
+        {
+            if(KnownCells[x-1][y].isSafe==false)
+            {
+                updateKnowledge(predicted, x, y-1); //predict left AGENTCELL
+            }
+        }
 
         if(x>0) //if the Agent is not at FIRST row
-        updateKnowledge(predicted, x-1, y); //predict above AGENTCELL
-
+        {
+            if(KnownCells[x-1][y].isSafe==false)
+            {
+                updateKnowledge(predicted, x-1, y); //predict above AGENTCELL
+            }
+        }
+        
         if(x<BORDER-1) //if the Agent if not at LAST Row
-        updateKnowledge(predicted, x+1, y); //predict below AGENTCELL
+        {
+            if(KnownCells[x-1][y].isSafe==false)
+            {
+                updateKnowledge(predicted, x+1, y); //predict below AGENTCELL
+            }
+        }
+        
 }
 
 void Agent::predictionProgress(AGENTCELL current, int x, int y)
@@ -225,7 +278,8 @@ void Agent::predictionProgress(AGENTCELL current, int x, int y)
 
 void Agent::movement(int x, int y)
 {   
-    AGENTCELL choosen_cell;
+    std::pair<int, int> coordinates;
+    CELL choosen_cell;
     while(!getCurrentCell().hasGold)
     {   
         predictionProgress(CurrentCell, x, y);
@@ -263,7 +317,22 @@ void Agent::movement(int x, int y)
                 std::cout << "Something wrong with movement" << endl;
                 break;
             }
-            choosen_cell = decisionMaker(Cell_and_Direction);
+            KnownCells[x][y].isRecentlyVisited=true;
+            coordinates = decisionMaker(Cell_and_Direction, x, y);
+            choosen_cell = World::getCell(coordinates.first, coordinates.second);
+            AGENTCELL current =
+            {
+                choosen_cell.hasBreeze,
+                choosen_cell.hasStench,
+                choosen_cell.hasGlitter,
+                choosen_cell.hasPit,
+                choosen_cell.hasWumpus,
+                choosen_cell.hasGold,
+                true,
+                true,
+                true
+            };
+            setCurrentCell(current, x, y);
         }
     }
     cout << "I found gold at x: " << x << " y: " << y << endl;

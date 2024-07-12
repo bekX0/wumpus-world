@@ -14,13 +14,14 @@ struct AGENTCELL{
     int hasGold;
     bool isVisited;
     bool isSafe;
+    bool isRecentlyVisited;
 };
 
 class Agent{
     private:
         AGENTCELL KnownCells[BORDER][BORDER];
         AGENTCELL CurrentCell;
-        AGENTCELL decisionMaker(std::vector<std::pair<AGENTCELL, char>> Cell_and_Direction);
+        std::pair<int, int> decisionMaker(std::vector<std::pair<AGENTCELL, char>> Cell_and_Direction, int x, int y);
         int decisionScore(AGENTCELL check);
         void predictionProgress(AGENTCELL current, int x, int y);
         void predictionUpdate(AGENTCELL predicted, int x, int y);
