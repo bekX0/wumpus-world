@@ -118,11 +118,13 @@ int Agent::decisionScore(AGENTCELL check)
 
 void Agent::predictionUpdate(AGENTCELL predicted, int x, int y)
 {
+    AGENTCELL real_like_prediction = predicted; //if first prediction is correct
         if(y<BORDER-1) //if the Agent is not at LAST column
         {
             if(KnownCells[x-1][y].isSafe==false)
             {
-                updateKnowledge(predicted, x, y+1); //predict right AGENTCELL
+                real_like_prediction = thinkingProgress(predicted, x, y+1); //consider predicted again by adjacent AGENTCELLS of it
+                updateKnowledge(real_like_prediction, x, y+1); //predict right AGENTCELL
             }
         }
         
@@ -130,6 +132,7 @@ void Agent::predictionUpdate(AGENTCELL predicted, int x, int y)
         {
             if(KnownCells[x-1][y].isSafe==false)
             {
+                real_like_prediction = thinkingProgress(predicted, x, y-1); //consider predicted again by adjacent AGENTCELLS of it
                 updateKnowledge(predicted, x, y-1); //predict left AGENTCELL
             }
         }
@@ -138,6 +141,7 @@ void Agent::predictionUpdate(AGENTCELL predicted, int x, int y)
         {
             if(KnownCells[x-1][y].isSafe==false)
             {
+                real_like_prediction = thinkingProgress(predicted, x-1, y); //consider predicted again by adjacent AGENTCELLS of it
                 updateKnowledge(predicted, x-1, y); //predict above AGENTCELL
             }
         }
@@ -146,6 +150,7 @@ void Agent::predictionUpdate(AGENTCELL predicted, int x, int y)
         {
             if(KnownCells[x-1][y].isSafe==false)
             {
+                real_like_prediction = thinkingProgress(predicted, x+1, y); //consider predicted again by adjacent AGENTCELLS of it
                 updateKnowledge(predicted, x+1, y); //predict below AGENTCELL
             }
         }
@@ -276,9 +281,114 @@ void Agent::predictionProgress(AGENTCELL current, int x, int y)
     }
 }
 
+std::pair<AGENTCELL, char> Agent::consideringProgress(AGENTCELL inferenced, AGENTCELL predicted)
+{
+    //Commented codelines say that we can't exactly predict there must be a pit or wumpus by looking adjacent cells and finds there is breeze or stench
+    //Open codelines say that we can exactly predict there can't be a pit or wumpus by looking adjacent cells and finds there is no breeze or stench
+
+    if(inferenced.hasBreeze == false && inferenced.hasStench == false) //if there is no breeze and stench in inferenced cell
+    {
+        if(predicted.hasPit >= 0) //and predicted cell considired as may hasPit
+        predicted.hasPit = -1; //statement redesigned as there is no Pit
+
+        if(predicted.hasWumpus >= 0) //and predicted cell considired as may hasWumpus
+        predicted.hasWumpus = -1; //statement redesigned as there is no Wumpus
+ 
+        return std::make_pair(predicted, 'C'); //returns new predicted and 'C' for "Changed"
+    }
+    if(inferenced.hasBreeze == false && inferenced.hasStench == true) //if there is no breeze but stench in inferenced cell
+    {
+        if(predicted.hasWumpus <= 0) //and predicted cell considired as may not hasWumpus
+        predicted.hasWumpus = 0; //statement redesigned as there is may Wumpus
+
+        // if(predicted.hasPit >= 0) //and predicted cell considired as may hasPit
+        // predicted.hasPit = -1; //statement redesigned as there is no Pit
+
+        return std::make_pair(predicted, 'C'); //returns new predicted and 'C' for "Changed"
+    }
+    if(inferenced.hasBreeze == true && inferenced.hasStench == false) //if there is no stench but breeze in inferenced cell
+    {
+        if(predicted.hasPit <= 0) //and predicted cell considired as may not hasPit
+        predicted.hasPit = 0; //statement redesigned as there is may Pit
+
+        // if(predicted.hasWumpus >= 0) //and predicted cell considired as may hasWumpus
+        // predicted.hasWumpus = -1; //statement redesigned as there is no Wumpus
+
+        return std::make_pair(predicted, 'C'); //returns new predicted and 'C' for "Changed"
+    }
+    if(inferenced.hasBreeze == true && inferenced.hasStench == true) //if there is no stench but breeze in inferenced cell
+    {
+        if(predicted.hasPit <= 0) //and predicted cell considired as may not hasPit
+        predicted.hasPit = 0; //statement redesigned as there is may Pit
+
+        if(predicted.hasWumpus >= 0) //and predicted cell considired as may hasWumpus
+        predicted.hasWumpus = -1; //statement redesigned as there is no Wumpus
+
+        return std::make_pair(predicted, 'C'); //returns new predicted and 'C' for "Changed"
+    }
+
+    return std::make_pair(predicted, 'N'); //returns predicted as taken and 'N' for "Not Changed"
+}
+
+AGENTCELL Agent::thinkingProgress(AGENTCELL predicted, int x, int y)
+{
+    //Known issue is if adjacent cells of real_like_prediction has breeze it will marked as there is a pit exactly
+    //But this case is not true all the time
+
+    std::pair<AGENTCELL, char> cell_and_mark;
+    AGENTCELL real_like_prediction = predicted; //if none of any statement is true
+    AGENTCELL inferenced_cell;
+
+        if(y<BORDER-2 && KnownCells[x][y+1].isVisited==true && KnownCells[x][y+1].isRecentlyVisited==false) //if the right of the predicted AGENTCELL is not at LAST column and already visited and not recently visited
+        {
+            inferenced_cell = getKnownCell(x, y+1); //right of the predicted in this case
+            cell_and_mark = consideringProgress(inferenced_cell, predicted);
+            if(cell_and_mark.second=='C')
+            {
+                real_like_prediction = cell_and_mark.first;
+                return real_like_prediction;
+            }
+        }
+        
+        if(y>1 && KnownCells[x][y-1].isVisited==true && KnownCells[x][y-1].isRecentlyVisited==false) //if the left of the predicted AGENTCELL is not at LAST column and already visited and not recently visited
+        {
+            inferenced_cell = getKnownCell(x, y-1); //left of the predicted in this case
+            cell_and_mark = consideringProgress(inferenced_cell, predicted);
+            if(cell_and_mark.second=='C')
+            {
+                real_like_prediction = cell_and_mark.first;
+                return real_like_prediction;
+            }
+        }
+
+        if(x>1 && KnownCells[x-1][y].isVisited==true && KnownCells[x-1][y].isRecentlyVisited==false) //if the above of the predicted AGENTCELL is not at LAST column and already visited and not recently visited
+        {
+            inferenced_cell = getKnownCell(x-1, y); //above of the predicted in this case
+            cell_and_mark = consideringProgress(inferenced_cell, predicted);
+            if(cell_and_mark.second=='C')
+            {
+                real_like_prediction = cell_and_mark.first;
+                return real_like_prediction;
+            }
+        }
+        
+        if(x<BORDER-2 && KnownCells[x+1][y].isVisited==true && KnownCells[x+1][y].isRecentlyVisited==false) //if the below of the predicted AGENTCELL is not at LAST column and already visited and not recently visited
+        {
+            inferenced_cell = getKnownCell(x+1, y); //below of the predicted in this case
+            cell_and_mark = consideringProgress(inferenced_cell, predicted);
+            if(cell_and_mark.second=='C')
+            {
+                real_like_prediction = cell_and_mark.first;
+                return real_like_prediction;
+            }
+        }
+    return real_like_prediction;
+}
+
 void Agent::movement(int x, int y)
 {   
     std::pair<int, int> coordinates;
+    std::vector<std::pair<int, int>> path;
     CELL choosen_cell;
     while(!getCurrentCell().hasGold)
     {   
@@ -317,9 +427,13 @@ void Agent::movement(int x, int y)
                 std::cout << "Something wrong with movement" << endl;
                 break;
             }
-            KnownCells[x][y].isRecentlyVisited=true;
-            coordinates = decisionMaker(Cell_and_Direction, x, y);
-            choosen_cell = World::getCell(coordinates.first, coordinates.second);
+            cout << "I am at x: " << x << " y: " << y << endl;
+            path.emplace_back(x,y); //Current CELL before moving
+            KnownCells[x][y].isRecentlyVisited=true; //Sets current CELL as RecentlyVisited 
+            coordinates = decisionMaker(Cell_and_Direction, x, y); //Decides upcoming CELL's coordinates
+            x = coordinates.first;
+            y = coordinates.second;
+            choosen_cell = World::getCell(coordinates.first, coordinates.second); //Gets real values of CELL from World
             AGENTCELL current =
             {
                 choosen_cell.hasBreeze,
@@ -333,6 +447,12 @@ void Agent::movement(int x, int y)
                 true
             };
             setCurrentCell(current, x, y);
+            path.emplace_back(x,y); //Current CELL after moving
+            if(path.size()>2)
+            {
+                KnownCells[path[path.size()-2].first][path[path.size()-2].second].isRecentlyVisited = false; //Sets CELL that 2 steps behind the current in PATH as not RecentlyVisited
+            }
+            cout << "I moved to x: " << x << " y: " << y << endl;
         }
     }
     cout << "I found gold at x: " << x << " y: " << y << endl;

@@ -25,6 +25,8 @@ class Agent{
         int decisionScore(AGENTCELL check);
         void predictionProgress(AGENTCELL current, int x, int y);
         void predictionUpdate(AGENTCELL predicted, int x, int y);
+        AGENTCELL thinkingProgress(AGENTCELL predicted, int x, int y);
+        std::pair<AGENTCELL, char> consideringProgress(AGENTCELL inferenced, AGENTCELL predicted);
     public:
         Agent();
         ~Agent();
