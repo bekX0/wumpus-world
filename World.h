@@ -7,6 +7,7 @@ struct CELL{
     bool hasStench;
     bool hasPit;
     bool hasWumpus;
+    bool hasGlitter;
     bool hasGold;
     bool hasAgent;
 }; 
@@ -16,7 +17,7 @@ class World{
 
     private:
         CELL map[BORDER][BORDER];
-
+        CELL getCell(int x, int y);
     public:
 
         World();    
