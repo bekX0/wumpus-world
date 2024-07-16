@@ -385,13 +385,18 @@ AGENTCELL Agent::thinkingProgress(AGENTCELL predicted, int x, int y)
     return real_like_prediction;
 }
 
-void Agent::movement(int x, int y)
+void Agent::movement(int x, int y, World world)
 {   
     std::pair<int, int> coordinates;
     std::vector<std::pair<int, int>> path;
     CELL choosen_cell;
     while(!getCurrentCell().hasGold)
     {   
+        if(getCurrentCell().hasPit == true || getCurrentCell().hasWumpus == true)
+        {
+            cout << "I died..." << endl;
+            break;
+        }
         predictionProgress(CurrentCell, x, y);
         std::vector<std::pair<AGENTCELL, char>> Cell_and_Direction;
         for(int i=0; i<4; i++)
@@ -433,7 +438,7 @@ void Agent::movement(int x, int y)
             coordinates = decisionMaker(Cell_and_Direction, x, y); //Decides upcoming CELL's coordinates
             x = coordinates.first;
             y = coordinates.second;
-            choosen_cell = World::getCell(coordinates.first, coordinates.second); //Gets real values of CELL from World
+            choosen_cell = world.getCell(coordinates.first, coordinates.second); //Gets real values of CELL from World
             AGENTCELL current =
             {
                 choosen_cell.hasBreeze,
@@ -446,7 +451,7 @@ void Agent::movement(int x, int y)
                 true,
                 true
             };
-            setCurrentCell(current, x, y);
+            setCurrentCell(current);
             path.emplace_back(x,y); //Current CELL after moving
             if(path.size()>2)
             {
@@ -463,9 +468,22 @@ void Agent::updateKnowledge(AGENTCELL learned, int x, int y)
     KnownCells[x][y] = learned;
 }
 
-Agent::Agent()
+void Agent::setCurrentCell(AGENTCELL current)
 {
-    CELL start = World::getCell(0, 0);
+    this->CurrentCell=current;
+}
+
+AGENTCELL Agent::getCurrentCell()
+{
+    return this->CurrentCell;
+}
+AGENTCELL Agent::getKnownCell(int x, int y)
+{
+    return this->KnownCells[x][y];
+}
+Agent::Agent(World world)
+{
+    CELL start = world.getCell(0, 0);
     AGENTCELL current =
     {
         start.hasBreeze,
@@ -477,7 +495,12 @@ Agent::Agent()
         true,
         true
     }; 
-    setCurrentCell(current, 0, 0);
+    setCurrentCell(current);
     updateKnowledge(current, 0, 0);
-    movement(0, 0);
+    movement(0, 0, world);
+}
+
+Agent::~Agent()
+{
+    //It kills agent methaporicly
 }

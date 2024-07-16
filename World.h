@@ -11,6 +11,7 @@ enum CELL {
 
 #define BORDER 5
 
+
 class World {
 public:
     World();

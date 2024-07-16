@@ -28,12 +28,13 @@ class Agent{
         AGENTCELL thinkingProgress(AGENTCELL predicted, int x, int y);
         std::pair<AGENTCELL, char> consideringProgress(AGENTCELL inferenced, AGENTCELL predicted);
     public:
-        Agent();
+        friend class World;
+        Agent(World world);
         ~Agent();
-        void setCurrentCell(AGENTCELL current, int x, int y);
+        void setCurrentCell(AGENTCELL current);
         AGENTCELL getCurrentCell();
         AGENTCELL getKnownCell(int x, int y);
-        void movement(int x, int y);
+        void movement(int x, int y, World world);
         void updateKnowledge(AGENTCELL Learned, int x, int y);
 };
 #endif
