@@ -1,11 +1,9 @@
+#include <iostream>
 #include "World.h"
 #include "WorldGenerator.h"
-#include <iostream>
 
 int main() {
-    World world; 
-    
-
-
+    World world = WorldGenerator::newWorld();
+    world.display();
     return 0;
 }
