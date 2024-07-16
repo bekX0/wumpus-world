@@ -1,12 +1,9 @@
+#include <iostream>
 #include "World.h"
 #include "WorldGenerator.h"
-#include "Agent.h"
-#include <iostream>
 
 int main() {
-    World world; 
-    Agent agent(world);
-
-
+    World world = WorldGenerator::newWorld();
+    world.display();
     return 0;
 }
