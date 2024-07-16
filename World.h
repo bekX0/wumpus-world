@@ -17,9 +17,9 @@ class World{
 
     private:
         CELL map[BORDER][BORDER];
-        CELL getCell(int x, int y);
+        
     public:
-
+        CELL getCell(int x, int y);
         World();    
 };
 
