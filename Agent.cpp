@@ -439,18 +439,7 @@ void Agent::movement(int x, int y, World world)
             x = coordinates.first;
             y = coordinates.second;
             choosen_cell = world.getCell(coordinates.first, coordinates.second); //Gets real values of CELL from World
-            AGENTCELL current =
-            {
-                choosen_cell.hasBreeze,
-                choosen_cell.hasStench,
-                choosen_cell.hasGlitter,
-                choosen_cell.hasPit,
-                choosen_cell.hasWumpus,
-                choosen_cell.hasGold,
-                true,
-                true,
-                true
-            };
+            AGENTCELL current = CelltoAgentCell(choosen_cell); //Converts choosen_cell to AGENTCELL by it's own values
             setCurrentCell(current);
             path.emplace_back(x,y); //Current CELL after moving
             if(path.size()>2)
@@ -460,7 +449,29 @@ void Agent::movement(int x, int y, World world)
             std::cout << "I moved to x: " << x << " y: " << y << std::endl;
         }
     }
+    if(getCurrentCell().hasGold==true)
     std::cout << "I found gold at x: " << x << " y: " << y << std::endl;
+}
+
+AGENTCELL Agent::CelltoAgentCell(CELL world)
+{
+    AGENTCELL converted =
+            {
+                world.hasBreeze,
+                world.hasStench,
+                world.hasGlitter,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true
+            };
+    converted.hasPit = world.hasPit ? 1:0;
+    converted.hasWumpus = world.hasWumpus ? 1:0;
+    converted.hasGold = world.hasGold ? 1:0;
+    
+    return converted;
 }
 
 void Agent::updateKnowledge(AGENTCELL learned, int x, int y)

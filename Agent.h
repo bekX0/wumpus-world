@@ -32,6 +32,7 @@ class Agent{
         Agent(World world);
         ~Agent();
         void setCurrentCell(AGENTCELL current);
+        AGENTCELL CelltoAgentCell(CELL world);
         AGENTCELL getCurrentCell();
         AGENTCELL getKnownCell(int x, int y);
         void movement(int x, int y, World world);
