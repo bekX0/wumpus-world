@@ -99,7 +99,8 @@ void WorldGenerator::safePath(World& world) {
     locGold.first = generateRandomNumber(BORDER);
     locGold.second = generateRandomNumber(BORDER);
     std::cout << "GOLD => " << locGold.first << locGold.second << std::endl;
-    world.setCell(locGold.first, locGold.second, GOLD);
+    CELL goldCell = {false, false, false, false, true, true, false};
+    world.setCell(locGold.first, locGold.second, goldCell);
 
     std::vector<std::vector<bool>> visited(BORDER, std::vector<bool>(BORDER, false));
     std::vector<std::vector<bool>> visiting(BORDER, std::vector<bool>(BORDER, false));
@@ -158,7 +159,8 @@ void WorldGenerator::safePath(World& world) {
         locWumpus.first = generateRandomNumber(BORDER);
         locWumpus.second = generateRandomNumber(BORDER);
     } while (std::find(path.begin(), path.end(), locWumpus) != path.end() || locWumpus == std::make_pair(0, 0));
-    world.setCell(locWumpus.first, locWumpus.second, WUMPUS);
+    CELL wumpusCell = {false, true, false, true, false, false, false};
+    world.setCell(locWumpus.first, locWumpus.second, wumpusCell);
 
     std::pair<int, int> locPits[PITS];
 
@@ -170,7 +172,8 @@ void WorldGenerator::safePath(World& world) {
                  locPits[i] == std::make_pair(0, 0) ||
                  includes(locPits, i, locPits[i]) ||
                  locPits[i] == locGold);
-        world.setCell(locPits[i].first, locPits[i].second, PIT);
+        CELL pitCell = {true, false, true, false, false, false, false};
+        world.setCell(locPits[i].first, locPits[i].second, pitCell);
     }
 
     std::cout << "Wumpus: " << locWumpus.first << "," << locWumpus.second << std::endl;

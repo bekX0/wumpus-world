@@ -394,7 +394,7 @@ void Agent::movement(int x, int y, World world)
     {   
         if(getCurrentCell().hasPit == true || getCurrentCell().hasWumpus == true)
         {
-            cout << "I died..." << endl;
+            std::cout << "I died..." << std::endl;
             break;
         }
         predictionProgress(CurrentCell, x, y);
@@ -429,10 +429,10 @@ void Agent::movement(int x, int y, World world)
                 break;
         
             default:
-                std::cout << "Something wrong with movement" << endl;
+                std::cout << "Something wrong with movement" << std::endl;
                 break;
             }
-            cout << "I am at x: " << x << " y: " << y << endl;
+            std::cout << "I am at x: " << x << " y: " << y << std::endl;
             path.emplace_back(x,y); //Current CELL before moving
             KnownCells[x][y].isRecentlyVisited=true; //Sets current CELL as RecentlyVisited 
             coordinates = decisionMaker(Cell_and_Direction, x, y); //Decides upcoming CELL's coordinates
@@ -457,10 +457,10 @@ void Agent::movement(int x, int y, World world)
             {
                 KnownCells[path[path.size()-2].first][path[path.size()-2].second].isRecentlyVisited = false; //Sets CELL that 2 steps behind the current in PATH as not RecentlyVisited
             }
-            cout << "I moved to x: " << x << " y: " << y << endl;
+            std::cout << "I moved to x: " << x << " y: " << y << std::endl;
         }
     }
-    cout << "I found gold at x: " << x << " y: " << y << endl;
+    std::cout << "I found gold at x: " << x << " y: " << y << std::endl;
 }
 
 void Agent::updateKnowledge(AGENTCELL learned, int x, int y)
