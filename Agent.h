@@ -15,6 +15,7 @@ struct AGENTCELL{
     bool isVisited;
     bool isSafe;
     bool isRecentlyVisited;
+    bool isConsidered;
 };
 
 class Agent{
@@ -23,9 +24,9 @@ class Agent{
         AGENTCELL CurrentCell;
         std::pair<int, int> decisionMaker(std::vector<std::pair<AGENTCELL, char>> Cell_and_Direction, int x, int y);
         int decisionScore(AGENTCELL check);
-        void predictionProgress(AGENTCELL current, int x, int y);
-        void predictionUpdate(AGENTCELL predicted, int x, int y);
-        AGENTCELL thinkingProgress(AGENTCELL predicted, int x, int y);
+        void predictionProgress(AGENTCELL current, int current_x, int current_y);
+        void predictionUpdate(AGENTCELL predicted, int current_x, int current_y);
+        AGENTCELL thinkingProgress(AGENTCELL predicted, int predicted_x, int predicted_y);
         std::pair<AGENTCELL, char> consideringProgress(AGENTCELL inferenced, AGENTCELL predicted);
     public:
         friend class World;
