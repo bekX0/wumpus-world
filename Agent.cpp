@@ -13,11 +13,14 @@ std::pair<int, int> Agent::decisionMaker(std::vector<std::pair<AGENTCELL, char>>
 {
     AGENTCELL cell;
     int score = 0;
-    int max = 0;
+    int max = -1000000;
     int coordinate_x = x;
     int coordinate_y = y;
     char direction;
+    int index;
     std::vector<std::pair<AGENTCELL, int>> Cell_and_Score;
+    std::vector<int> indexof_maxs;
+    srand(time(0));
 
     for(int i=0; i<Cell_and_Direction.size(); ++i)
     {
@@ -27,19 +30,40 @@ std::pair<int, int> Agent::decisionMaker(std::vector<std::pair<AGENTCELL, char>>
         std::cout << "I can move the direction: " << Cell_and_Direction[i].second << std::endl << std::endl;
     }
 
-    max = Cell_and_Score[0].second;
-    cell = Cell_and_Score[0].first;
-    direction = Cell_and_Direction[0].second;
+    // max = Cell_and_Score[0].second;
+    // cell = Cell_and_Score[0].first;
+    // direction = Cell_and_Direction[0].second;
+    // std::cout << "Score of cell: " << Cell_and_Direction[0].second << "  " << Cell_and_Score[0].second << std::endl << std::endl;
 
     for(int i=0; i<Cell_and_Score.size(); i++)
     {
         std::cout << "Score of cell: " << Cell_and_Direction[i].second << "  " << Cell_and_Score[i].second << std::endl << std::endl;
-        if(Cell_and_Score[i].second >= max)
+        if(Cell_and_Score[i].second > max)
         {
             max = Cell_and_Score[i].second;
             cell = Cell_and_Score[i].first;
             direction = Cell_and_Direction[i].second;
+            indexof_maxs.clear();
         }
+        if(Cell_and_Score[i].second = max)
+        {
+            indexof_maxs.emplace_back(i);
+        }
+    }
+    if(indexof_maxs.size()>1)
+    {
+        for(int j=0; j<indexof_maxs.size(); j++) //check cells that has same max score
+        {
+            if(Cell_and_Score[indexof_maxs[j]].first.isRecentlyVisited == true) //if there is a cell that is recently visited
+            {
+                indexof_maxs.erase(indexof_maxs.begin()+j); //delete it to prevent loop
+            }
+        }
+        index = rand() % indexof_maxs.size(); //chooses an index of max from vector of same max scores
+        index = indexof_maxs[index]; //get this index from the vector
+        max = Cell_and_Score[index].second;
+        cell = Cell_and_Score[index].first;
+        direction = Cell_and_Direction[index].second;
     }
 
     switch (direction)
@@ -477,8 +501,14 @@ void Agent::movement(int x, int y, World world)
     {   
         if(getCurrentCell().hasPit == true || getCurrentCell().hasWumpus == true)
         {
-            std::cout << "I died..." << std::endl;
-            break;
+            std::cout << "I'm in danger" << std::endl;
+            health = health - 1;
+            std::cout << health << " health left" << std::endl;
+            if(health == 0)
+            {
+                std::cout << "I died..." << std::endl;
+                break;
+            }
         }
         predictionProgress(CurrentCell, cord_x, cord_y);
         std::vector<std::pair<AGENTCELL, char>> Cell_and_Direction;
@@ -512,9 +542,10 @@ void Agent::movement(int x, int y, World world)
         path.emplace_back(cord_x,cord_y); //Current CELL after moving
         if(path.size()>2)
         {
-            KnownCells[path[path.size()-2].first][path[path.size()-2].second].isRecentlyVisited = false; //Sets CELL that 2 steps behind the current in PATH as not RecentlyVisited
+            KnownCells[path[path.size()-3].first][path[path.size()-3].second].isRecentlyVisited = false; //Sets CELL that 2 steps behind the current in PATH as not RecentlyVisited
         }
         std::cout << "I moved to x: " << cord_x << " y: " << cord_y << std::endl;
+        updateKnowledge(current, cord_x, cord_y);
         Cell_and_Direction.clear();
     }
 
@@ -566,6 +597,7 @@ AGENTCELL Agent::getKnownCell(int x, int y)
 
 Agent::Agent(World world)
 {
+    health = 3;
     for (int i = 0; i < BORDER; ++i) {
         for (int j = 0; j < BORDER; ++j) {
             KnownCells[i][j] = 
