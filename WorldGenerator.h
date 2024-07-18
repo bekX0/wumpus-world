@@ -25,6 +25,7 @@ private:
     static std::pair<int, int> nextCell(std::pair<int, int> curr, int direction);
     static bool includes(std::pair<int, int> array[], int size, std::pair<int, int> value);
     static void safePath(World& world);
+    static bool checkCross(const World& World, const std::pair<int, int>& coord);
 };
 
 #endif

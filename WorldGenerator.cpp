@@ -76,6 +76,49 @@ std::pair<int, int> WorldGenerator::nextCell(std::pair<int, int> curr, int direc
     }
 }
 
+//Returns true if cross coordinates of cell<coord> are clear and there is no pit or wumpus. TRUE MEANS ITS SAFE
+bool WorldGenerator::checkCross(const World& World, const std::pair<int, int>& coord){
+    //amaç çaprazda main mob var mı (PIT; WUMPUS)
+    /*
+    [][][]
+    [][][]
+    [][][]
+    
+    upper left => UL 
+    upper right => UR
+    lower left >= LL
+    lower rigt => LR
+    */ 
+    int x = coord.first;
+    int y = coord.second;
+
+    std::pair<int, int> UL = std::make_pair(x-1, y-1);
+    std::pair<int, int> UR = std::make_pair(x-1, y+1);
+    std::pair<int, int> LL = std::make_pair(x+1, y-1);
+    std::pair<int, int> LR = std::make_pair(x+1, y+1);
+
+    std::pair<int, int>* coords = new std::pair<int, int>[4];
+    coords[0] = UL;
+    coords[1] = UR;
+    coords[2] = LL;
+    coords[3] = LR;
+
+    for(int i=0; i < 4; ++i){
+        
+        x = coords[i].first;
+        y = coords[i].second;
+
+        if(!inBorder(x, y) || // if cross cell is not inside of the map
+            World.getCell(x, y).hasWumpus || // if there is a wumpus
+            World.getCell(x, y).hasPit
+            )
+            {
+                return false;
+            }
+    }
+    return true;
+}
+
 bool WorldGenerator::includes(std::pair<int, int> array[], int size, std::pair<int, int> value) {
     for (int i = 0; i < size; ++i) {
         if (array[i] == value) {
@@ -90,7 +133,7 @@ World WorldGenerator::newWorld() {
     safePath(world);
     return world;
 }
-
+// todo agent 3 hak daha düşük puanı seçme şansı loop olayında
 void WorldGenerator::safePath(World& world) {
     srand(time(0));
 
@@ -182,7 +225,8 @@ void WorldGenerator::safePath(World& world) {
                  locPits[i] == std::make_pair(0, 0) ||
                  includes(locPits, i, locPits[i]) ||
                  locPits[i] == locGold ||
-                 locPits[i] == locWumpus);
+                 locPits[i] == locWumpus ||
+                 !checkCross(world, locPits[i]));
         CELL pitCell = {true, false, true, false, false, false, false, true};
         world.setCell(locPits[i].first, locPits[i].second, pitCell);
 
