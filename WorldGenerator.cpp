@@ -18,6 +18,13 @@ int WorldGenerator::generateRandomDirection(std::vector<int>& compass) {
     compass.erase(compass.begin() + randomIndex);
     return direction;
 }
+std::pair<int, int> WorldGenerator::generateRandomCell(std::vector<std::pair<int, int>>& available) {
+    int size = available.size();
+    int randomIndex = rand() % size;
+    std::pair<int, int> cell = available[randomIndex];
+    available.erase(available.begin() + randomIndex);
+    return cell;
+}
 
 bool WorldGenerator::inBorder(int x, int y) {
     return (x < BORDER && x >= 0) && (y < BORDER && y >= 0);
@@ -238,10 +245,24 @@ void WorldGenerator::safePath(World& world) {
     // Select wumpus and pits
     std::pair<int, int> locWumpus;
 
-    do {
-        locWumpus.first = generateRandomNumber(BORDER);
-        locWumpus.second = generateRandomNumber(BORDER);
-    } while (std::find(path.begin(), path.end(), locWumpus) != path.end() || locWumpus == std::make_pair(0, 0));
+    std::vector<std::pair<int, int>> available; 
+    for(int i=0; i< BORDER; ++i){
+        for(int j = 0; j <BORDER; ++j){
+            std::pair<int, int> cell = std::make_pair(i, j);
+            if(std::find(path.begin(), path.end(), cell) == path.end())
+                available.push_back(cell);
+        }
+    }
+    if(available.size() < 4){
+        safePath(world);
+        return;
+    }
+
+    // do {
+    //     locWumpus.first = generateRandomNumber(BORDER);
+    //     locWumpus.second = generateRandomNumber(BORDER);
+    // } while (std::find(path.begin(), path.end(), locWumpus) != path.end() || locWumpus == std::make_pair(0, 0));
+    locWumpus = generateRandomCell(available);
     CELL wumpusCell = {false, true, false, true, false, false, false, true};
     world.setCell(locWumpus.first, locWumpus.second, wumpusCell);
     //CELL stenchCell = {false, true, false, false, false, false, false, true};
@@ -253,15 +274,16 @@ void WorldGenerator::safePath(World& world) {
     std::pair<int, int> locPits[PITS];
 
     for (int i = 0; i < PITS; ++i) {
-        do {
-            locPits[i].first = generateRandomNumber(BORDER);
-            locPits[i].second = generateRandomNumber(BORDER);
-        } while (std::find(path.begin(), path.end(), locPits[i]) != path.end() ||
-                 locPits[i] == std::make_pair(0, 0) ||
-                 includes(locPits, i, locPits[i]) ||
-                 locPits[i] == locGold ||
-                 locPits[i] == locWumpus ||
-                 !checkCross(world, locPits[i]));
+        // do {
+        //     locPits[i].first = generateRandomNumber(BORDER);
+        //     locPits[i].second = generateRandomNumber(BORDER);
+        // } while (std::find(path.begin(), path.end(), locPits[i]) != path.end() ||
+        //          locPits[i] == std::make_pair(0, 0) ||
+        //          includes(locPits, i, locPits[i]) ||
+        //          locPits[i] == locGold ||
+        //          locPits[i] == locWumpus ||
+        //          !checkCross(world, locPits[i]));
+        locPits[i] = generateRandomCell(available);
         CELL pitCell = {true, false, true, false, false, false, false, true};
         world.setCell(locPits[i].first, locPits[i].second, pitCell);
 

@@ -38,7 +38,6 @@ void printWorld(const World& world) {
 int main() {
     World world = WorldGenerator::newWorld();
     printWorld(world);
-    return 0;
     Agent agent(world);
     //get playyyyy
 
