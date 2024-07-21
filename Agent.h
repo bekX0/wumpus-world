@@ -23,6 +23,7 @@ class Agent{
         AGENTCELL KnownCells[BORDER][BORDER];
         AGENTCELL CurrentCell;
         int health;
+        int stress;
         std::pair<int, int> decisionMaker(std::vector<std::pair<AGENTCELL, char>> Cell_and_Direction, int x, int y);
         int decisionScore(AGENTCELL check);
         void predictionProgress(AGENTCELL current, int current_x, int current_y);

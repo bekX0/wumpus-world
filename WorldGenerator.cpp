@@ -99,7 +99,7 @@ void WorldGenerator::safePath(World& world) {
     locGold.first = generateRandomNumber(BORDER);
     locGold.second = generateRandomNumber(BORDER);
     std::cout << "GOLD => " << locGold.first << locGold.second << std::endl;
-    CELL goldCell = {false, false, false, false, true, true, false, true};
+    CELL goldCell = {false, false, false, false, false, true, false, true};
     world.setCell(locGold.first, locGold.second, goldCell);
     //CELL glitterCell = {false, false, false, false, true, false, false, true};
     world.setCell(locGold.first+1, locGold.second, 'G');
@@ -164,7 +164,7 @@ void WorldGenerator::safePath(World& world) {
         locWumpus.first = generateRandomNumber(BORDER);
         locWumpus.second = generateRandomNumber(BORDER);
     } while (std::find(path.begin(), path.end(), locWumpus) != path.end() || locWumpus == std::make_pair(0, 0));
-    CELL wumpusCell = {false, true, false, true, false, false, false, true};
+    CELL wumpusCell = {false, false, false, true, false, false, false, true};
     world.setCell(locWumpus.first, locWumpus.second, wumpusCell);
     //CELL stenchCell = {false, true, false, false, false, false, false, true};
     world.setCell(locWumpus.first+1, locWumpus.second, 'S');
@@ -183,7 +183,7 @@ void WorldGenerator::safePath(World& world) {
                  includes(locPits, i, locPits[i]) ||
                  locPits[i] == locGold ||
                  locPits[i] == locWumpus);
-        CELL pitCell = {true, false, true, false, false, false, false, true};
+        CELL pitCell = {false, false, true, false, false, false, false, true};
         world.setCell(locPits[i].first, locPits[i].second, pitCell);
 
         //CELL breezeCell = {true, false, false, false, false, false, false, true};
