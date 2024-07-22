@@ -263,7 +263,7 @@ void WorldGenerator::safePath(World& world) {
     //     locWumpus.second = generateRandomNumber(BORDER);
     // } while (std::find(path.begin(), path.end(), locWumpus) != path.end() || locWumpus == std::make_pair(0, 0));
     locWumpus = generateRandomCell(available);
-    CELL wumpusCell = {false, true, false, true, false, false, false, true};
+    CELL wumpusCell = {false, false, false, true, false, false, false, true};
     world.setCell(locWumpus.first, locWumpus.second, wumpusCell);
     //CELL stenchCell = {false, true, false, false, false, false, false, true};
     world.setCell(locWumpus.first+1, locWumpus.second, 'S');
@@ -284,7 +284,7 @@ void WorldGenerator::safePath(World& world) {
         //          locPits[i] == locWumpus ||
         //          !checkCross(world, locPits[i]));
         locPits[i] = generateRandomCell(available);
-        CELL pitCell = {true, false, true, false, false, false, false, true};
+        CELL pitCell = {false, false, true, false, false, false, false, true};
 
         world.setCell(locPits[i].first, locPits[i].second, pitCell);
 
