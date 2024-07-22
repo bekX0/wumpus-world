@@ -18,26 +18,6 @@ void World::setCell(int x, int y, const CELL& value) {
         map[x][y] = value;
         map[x][y].hasCreated = true;
     }
-        // else{
-        //     if(value.hasBreeze == true){
-        //         map[x][y].hasBreeze = true;
-        //     }
-        //     if(value.hasStench == true){
-        //         map[x][y].hasStench = true;
-        //     }
-        //     if(value.hasGlitter == true){
-        //         map[x][y].hasGlitter = true;
-        //     }
-        //     if(value.hasPit == true){
-        //         map[x][y].hasPit = true;
-        //     }
-        //     if(value.hasWumpus == true){
-        //         map[x][y].hasWumpus = true;
-        //     }
-        //     if(value.hasGold == true){
-        //         map[x][y].hasGold = true;
-        //     }
-        // }
 }
 
 void World::setCell(int x, int y, char attribute) {
@@ -61,6 +41,5 @@ void World::setCell(int x, int y, char attribute) {
     }
     else{
         //I crashed to wall dude sorry.
-        //I falled from the world
     }
 }

@@ -39,7 +39,5 @@ int main() {
     World world = WorldGenerator::newWorld();
     printWorld(world);
     Agent agent(world);
-    //get playyyyy
-
     return 0;
 }

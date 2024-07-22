@@ -296,47 +296,6 @@ std::pair<AGENTCELL, char> Agent::consideringProgress(AGENTCELL inferenced, AGEN
         predicted.isConsidered = true;
         cell_and_mark = std::make_pair(predicted, 'C'); //modified predicted and 'C' for "Changed"
     }
-    // if(inferenced.hasBreeze == false && inferenced.hasStench == false) //if there is no breeze and stench in inferenced cell
-    // {
-    //     if(predicted.hasPit >= 0) //and predicted cell considired as may hasPit
-    //     predicted.hasPit = -1; //statement redesigned as there is no Pit
-
-    //     if(predicted.hasWumpus >= 0) //and predicted cell considired as may hasWumpus
-    //     predicted.hasWumpus = -1; //statement redesigned as there is no Wumpus
- 
-    //     return std::make_pair(predicted, 'C'); //returns new predicted and 'C' for "Changed"
-    // }
-    // if(inferenced.hasBreeze == false && inferenced.hasStench == true) //if there is no breeze but stench in inferenced cell
-    // {
-    //     if(predicted.hasWumpus <= 0) //and predicted cell considired as may not hasWumpus
-    //     predicted.hasWumpus = 0; //statement redesigned as there is may Wumpus
-
-    //     // if(predicted.hasPit >= 0) //and predicted cell considired as may hasPit
-    //     // predicted.hasPit = -1; //statement redesigned as there is no Pit
-
-    //     return std::make_pair(predicted, 'C'); //returns new predicted and 'C' for "Changed"
-    // }
-    // if(inferenced.hasBreeze == true && inferenced.hasStench == false) //if there is no stench but breeze in inferenced cell
-    // {
-    //     if(predicted.hasPit <= 0) //and predicted cell considired as may not hasPit
-    //     predicted.hasPit = 0; //statement redesigned as there is may Pit
-
-    //     // if(predicted.hasWumpus >= 0) //and predicted cell considired as may hasWumpus
-    //     // predicted.hasWumpus = -1; //statement redesigned as there is no Wumpus
-
-    //     return std::make_pair(predicted, 'C'); //returns new predicted and 'C' for "Changed"
-    // }
-    // if(inferenced.hasBreeze == true && inferenced.hasStench == true) //if there is no stench but breeze in inferenced cell
-    // {
-    //     if(predicted.hasPit <= 0) //and predicted cell considired as may not hasPit
-    //     predicted.hasPit = 0; //statement redesigned as there is may Pit
-
-    //     if(predicted.hasWumpus >= 0) //and predicted cell considired as may hasWumpus
-    //     predicted.hasWumpus = -1; //statement redesigned as there is no Wumpus
-
-    //     return std::make_pair(predicted, 'C'); //returns new predicted and 'C' for "Changed"
-    // }
-
     return cell_and_mark;
 }
 
@@ -351,7 +310,7 @@ AGENTCELL Agent::thinkingProgress(AGENTCELL predicted, int predicted_x, int pred
 
         if(predicted_y<BORDER-1 && KnownCells[predicted_x][predicted_y+1].isVisited==true && KnownCells[predicted_x][predicted_y+1].isRecentlyVisited==false) //if the right of the predicted AGENTCELL is not at LAST column and already visited and not recently visited
         {
-            inferenced_cell = getKnownCell(predicted_x, predicted_y+1); //right of the predicted in this case
+            inferenced_cell = getKnownCell(predicted_x, predicted_y+1);
             cell_and_mark = consideringProgress(inferenced_cell, predicted);
             if(cell_and_mark.second=='C')
             {
@@ -384,7 +343,7 @@ AGENTCELL Agent::thinkingProgress(AGENTCELL predicted, int predicted_x, int pred
         
         if(predicted_x<BORDER-1 && KnownCells[predicted_x+1][predicted_y].isVisited==true && KnownCells[predicted_x+1][predicted_y].isRecentlyVisited==false) //if the below of the predicted AGENTCELL is not at LAST column and already visited and not recently visited
         {
-            inferenced_cell = getKnownCell(predicted_x+1, predicted_y); //below of the predicted in this case
+            inferenced_cell = getKnownCell(predicted_x+1, predicted_y);
             cell_and_mark = consideringProgress(inferenced_cell, predicted);
             if(cell_and_mark.second=='C')
             {
@@ -525,18 +484,6 @@ Agent::Agent(World world)
         }
     }
     AGENTCELL current = CelltoAgentCell(world.getCell(0,0));
-    // {
-    //     start.hasBreeze,
-    //     start.hasStench,
-    //     start.hasGlitter,
-    //     -1,
-    //     -1,
-    //     -1,
-    //     true,
-    //     true,
-    //     true,
-    //     true
-    // }; 
     setCurrentCell(current);
     updateKnowledge(current, 0, 0);
     movement(0, 0, world);

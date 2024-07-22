@@ -51,8 +51,8 @@ void WorldGenerator::resetCompass(int arr[]) {
 }
 
 void WorldGenerator::resetCompass(std::vector<int>& compass) {
-    compass.clear();            // Vektörü temizle
-    compass = {0, 1, 2, 3};    // Yeni değerlerle doldur
+    compass.clear();
+    compass = {0, 1, 2, 3};
 }
 
 bool WorldGenerator::checkCompass(int arr[]) {
@@ -99,17 +99,6 @@ std::pair<int, int> WorldGenerator::nextCell(std::pair<int, int> curr, int direc
 
 //Returns true if cross coordinates of cell<coord> are clear and there is no pit or wumpus. TRUE MEANS ITS SAFE
 bool WorldGenerator::checkCross(const World& World, const std::pair<int, int>& coord){
-    //amaç çaprazda main mob var mı (PIT; WUMPUS)
-    /*
-    [][][]
-    [][][]
-    [][][]
-    
-    upper left => UL 
-    upper right => UR
-    lower left >= LL
-    lower rigt => LR
-    */ 
     int x = coord.first;
     int y = coord.second;
 
@@ -192,7 +181,6 @@ void WorldGenerator::safePath(World& world) {
     std::stack<std::pair<int, int>> stack;
     std::pair<int, int> locCurrent = std::make_pair(0, 0);
     stack.push(locCurrent);
-    // int compass[4] = {1, 1, 1, 1};
     std::vector<int> compass = {1, 2, 3, 4};
     int ctr = 0;
     bool isStuck = false;
@@ -210,7 +198,6 @@ void WorldGenerator::safePath(World& world) {
         do {
             if (checkCompass(compass)) {
                 isStuck = true;
-                std::cout << "SA AGA" << std::endl;
                 break;
             }
             direction = generateRandomDirection(compass);
@@ -258,12 +245,10 @@ void WorldGenerator::safePath(World& world) {
         return;
     }
 
-    // do {
-    //     locWumpus.first = generateRandomNumber(BORDER);
-    //     locWumpus.second = generateRandomNumber(BORDER);
-    // } while (std::find(path.begin(), path.end(), locWumpus) != path.end() || locWumpus == std::make_pair(0, 0));
     locWumpus = generateRandomCell(available);
-    CELL wumpusCell = {false, false, false, true, false, false, false, true};
+    CELL wumpusCell = world.getCell(locWumpus.first, locWumpus.second);
+    wumpusCell.hasWumpus = true;
+    wumpusCell.hasCreated = true;
     world.setCell(locWumpus.first, locWumpus.second, wumpusCell);
     //CELL stenchCell = {false, true, false, false, false, false, false, true};
     world.setCell(locWumpus.first+1, locWumpus.second, 'S');
@@ -274,21 +259,11 @@ void WorldGenerator::safePath(World& world) {
     std::pair<int, int> locPits[PITS];
 
     for (int i = 0; i < PITS; ++i) {
-        // do {
-        //     locPits[i].first = generateRandomNumber(BORDER);
-        //     locPits[i].second = generateRandomNumber(BORDER);
-        // } while (std::find(path.begin(), path.end(), locPits[i]) != path.end() ||
-        //          locPits[i] == std::make_pair(0, 0) ||
-        //          includes(locPits, i, locPits[i]) ||
-        //          locPits[i] == locGold ||
-        //          locPits[i] == locWumpus ||
-        //          !checkCross(world, locPits[i]));
         locPits[i] = generateRandomCell(available);
-        CELL pitCell = {false, false, true, false, false, false, false, true};
-
-        world.setCell(locPits[i].first, locPits[i].second, pitCell);
-
-        //CELL breezeCell = {true, false, false, false, false, false, false, true};
+        CELL tmpPit = world.getCell(locPits[i].first, locPits[i].second);
+        tmpPit.hasPit = true;
+        tmpPit.hasCreated = true;
+        world.setCell(locPits[i].first, locPits[i].second, tmpPit);
         world.setCell(locPits[i].first+1, locPits[i].second, 'B');
         world.setCell(locPits[i].first-1, locPits[i].second, 'B');
         world.setCell(locPits[i].first, locPits[i].second+1, 'B');
