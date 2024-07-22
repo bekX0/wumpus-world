@@ -14,8 +14,10 @@ public:
 private:
     static int generateRandomNumber(int range);
     static int generateRandomDirection(std::vector<int>& compass);
+    static std::pair<int, int> generateRandomCell(std::vector<std::pair<int, int>>& available);
     static bool inBorder(int x, int y);
     static void changeCompass(int arr[], int direction);
+    static void changeCompass(std::vector<int>& compass, int direction);
     static void resetCompass(int arr[]);
     static void resetCompass(std::vector<int>& compass);
     static bool checkCompass(int arr[]);
@@ -25,6 +27,8 @@ private:
     static std::pair<int, int> nextCell(std::pair<int, int> curr, int direction);
     static bool includes(std::pair<int, int> array[], int size, std::pair<int, int> value);
     static void safePath(World& world);
+    static bool checkCross(const World& World, const std::pair<int, int>& coord);
+    static void displayWorld(std::vector<std::pair<int, int>> path);
 };
 
 #endif
