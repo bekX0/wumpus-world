@@ -19,7 +19,6 @@ std::pair<int, int> Agent::decisionMaker(std::vector<std::pair<AGENTCELL, char>>
     char direction;
     int index_rand;
     int index_max;
-    //int last_chance;
     std::vector<std::pair<AGENTCELL, int>> Cell_and_Score;
     std::vector<int> indexof_maxs;
     srand(time(0));
@@ -34,19 +33,16 @@ std::pair<int, int> Agent::decisionMaker(std::vector<std::pair<AGENTCELL, char>>
             cell = Cell_and_Direction[i].first;
             score = decisionScore(cell);
             Cell_and_Score.emplace_back(cell, score);
-            std::cout << "I can move the direction: " << Cell_and_Direction[i].second << " Index of direction: " << i << std::endl << std::endl;
         }
 
         for(int l=0; l<Cell_and_Score.size(); l++)
         {
-            std::cout << "Score of cell: " << Cell_and_Direction[l].second << "  " << Cell_and_Score[l].second << " Index of Cell: " << l << std::endl << std::endl;
             if(Cell_and_Score[l].second > max)
             {
                 max = Cell_and_Score[l].second;
                 cell = Cell_and_Score[l].first;
                 direction = Cell_and_Direction[l].second;
                 index_max = l;
-                //std::cout << " Index of MAX: " << index_max << " and index:" << l << std::endl;
                 indexof_maxs.clear();
                 indexof_maxs.emplace_back(l);
             }
@@ -69,13 +65,11 @@ std::pair<int, int> Agent::decisionMaker(std::vector<std::pair<AGENTCELL, char>>
             max = Cell_and_Score[index_max].second;
             cell = Cell_and_Score[index_max].first;
             direction = Cell_and_Direction[index_max].second;
-            //std::cout << " Index of MAX: " << index_max << " and index random:" << index_rand << std::endl;
         }
 
         if(cell.isRecentlyVisited == true && stress > 0) //if Agent deciede to go a Cell that RecentlyVisited
         {
             stress = stress - 1; //Agent's stress level goes down
-            std::cout << "My stress level now: " << stress << std::endl << std::endl;
             break;
         }
         else if(cell.isRecentlyVisited == true && stress <= 0) //if Agent deciede to go a Cell that RecentlyVisited but don't have stress
@@ -85,17 +79,13 @@ std::pair<int, int> Agent::decisionMaker(std::vector<std::pair<AGENTCELL, char>>
                 if(Cell_and_Direction[k].first.hasPit <= 0 && Cell_and_Direction[k].first.hasWumpus <= 0 && k != index_max) //if there is another Cell that has no Pit and Wumpus and is not the decieded one
                 {   
                     stress = 2;
-                    std::cout << "I choosed the direction: " << direction << " with point: " << max << std::endl << std::endl;
-                    std::cout << "Let's think again!" << std::endl << std::endl;
                     Cell_and_Direction.erase(Cell_and_Direction.begin() + index_max);
-                    //std::cout << " Index of MAX: " << index_max << " k is: " << k << std::endl;
                     break;
                 }
             }
             if(stress != 2)
             {
                 stress = 0;
-                std::cout << "Can't choose a better way other than going back!" << std::endl << std::endl;
                 break;
             }
             // else
@@ -132,7 +122,6 @@ std::pair<int, int> Agent::decisionMaker(std::vector<std::pair<AGENTCELL, char>>
     default:
         break;
     }
-    std::cout << "I choosed the direction: " << direction << " with point: " << max << std::endl << std::endl;
     return std::make_pair(coordinate_x,coordinate_y);
 }
 
@@ -274,135 +263,6 @@ void Agent::predictionProgress(AGENTCELL current, int current_x, int current_y)
     }
 
     predictionUpdate(predicted, current_x, current_y);
-
-    // if(current.hasBreeze == false && current.hasStench == false && current.hasGlitter == true)
-    // {
-    //     AGENTCELL predicted = AGENTCELL
-    //     {
-    //         false,
-    //         false,
-    //         false,
-    //         -1,
-    //         -1,
-    //         0,
-    //         false,
-    //         true,
-    //         false
-    //     };
-    //     predictionUpdate(predicted, x, y);
-    // }
-    // else if(current.hasBreeze == true && current.hasStench == false && current.hasGlitter == true)
-    // {
-    //     AGENTCELL predicted = AGENTCELL
-    //     {
-    //         false,
-    //         false,
-    //         false,
-    //         0,
-    //         -1,
-    //         0,
-    //         false,
-    //         false,
-    //         false
-    //     };
-    //     predictionUpdate(predicted, x, y);
-    // }
-    // else if(current.hasBreeze == false && current.hasStench == true && current.hasGlitter == true)
-    // {
-    //     AGENTCELL predicted = AGENTCELL
-    //     {
-    //         false,
-    //         false,
-    //         false,
-    //         -1,
-    //         0,
-    //         0,
-    //         false,
-    //         false,
-    //         false
-    //     };
-    //     predictionUpdate(predicted, x, y);
-    // }
-    // else if(current.hasBreeze == true && current.hasStench == true & current.hasGlitter == true)
-    // {
-    //     AGENTCELL predicted = AGENTCELL
-    //     {
-    //         false,
-    //         false,
-    //         false,
-    //         0,
-    //         0,
-    //         0,
-    //         false,
-    //         false,
-    //         false
-    //     };
-    //     predictionUpdate(predicted, x, y);
-    // }
-    // else if(current.hasBreeze == false && current.hasStench == false && current.hasGlitter == false)
-    // {
-    //     AGENTCELL predicted = AGENTCELL
-    //     {
-    //         false,
-    //         false,
-    //         false,
-    //         -1,
-    //         -1,
-    //         -1,
-    //         false,
-    //         true,
-    //         false
-    //     };
-    //     predictionUpdate(predicted, x, y);
-    // }
-    // else if(current.hasBreeze == true && current.hasStench == false && current.hasGlitter == false)
-    // {
-    //     AGENTCELL predicted = AGENTCELL
-    //     {
-    //         false,
-    //         false,
-    //         false,
-    //         0,
-    //         -1,
-    //         -1,
-    //         false,
-    //         false,
-    //         false
-    //     };
-    //     predictionUpdate(predicted, x, y);
-    // }
-    // else if(current.hasBreeze == false && current.hasStench == true && current.hasGlitter == false)
-    // {
-    //     AGENTCELL predicted = AGENTCELL
-    //     {
-    //         false,
-    //         false,
-    //         false,
-    //         -1,
-    //         0,
-    //         0,
-    //         false,
-    //         false,
-    //         false
-    //     };
-    //     predictionUpdate(predicted, x, y);
-    // }
-    // else if(current.hasBreeze == true && current.hasStench == true & current.hasGlitter == false)
-    // {
-    //     AGENTCELL predicted = AGENTCELL
-    //     {
-    //         false,
-    //         false,
-    //         false,
-    //         0,
-    //         0,
-    //         -1,
-    //         false,
-    //         false,
-    //         false
-    //     };
-    //     predictionUpdate(predicted, x, y);
-    // }
 }
 
 std::pair<AGENTCELL, char> Agent::consideringProgress(AGENTCELL inferenced, AGENTCELL predicted)
