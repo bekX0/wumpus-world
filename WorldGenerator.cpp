@@ -178,7 +178,7 @@ void WorldGenerator::safePath(World& world) {
     locGold.first = generateRandomNumber(BORDER);
     locGold.second = generateRandomNumber(BORDER);
     std::cout << "GOLD => " << locGold.first << locGold.second << std::endl;
-    CELL goldCell = {false, false, false, false, true, true, false, true};
+    CELL goldCell = {false, false, false, false, false, true, false, true};
     world.setCell(locGold.first, locGold.second, goldCell);
     //CELL glitterCell = {false, false, false, false, true, false, false, true};
     world.setCell(locGold.first+1, locGold.second, 'G');
@@ -285,6 +285,7 @@ void WorldGenerator::safePath(World& world) {
         //          !checkCross(world, locPits[i]));
         locPits[i] = generateRandomCell(available);
         CELL pitCell = {true, false, true, false, false, false, false, true};
+
         world.setCell(locPits[i].first, locPits[i].second, pitCell);
 
         //CELL breezeCell = {true, false, false, false, false, false, false, true};
