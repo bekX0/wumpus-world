@@ -2,23 +2,26 @@
 #define WORLD_H
 
 #include <vector>
-enum CELL {
-    EMPTY,
-    GOLD,
-    WUMPUS,
-    PIT
+
+struct CELL {
+    bool hasBreeze;
+    bool hasStench;
+    bool hasPit;
+    bool hasWumpus;
+    bool hasGlitter;
+    bool hasGold;
+    bool hasAgent;
+    bool hasCreated;
 };
 
 #define BORDER 5
 
-
 class World {
 public:
     World();
-    CELL getCell(int x, int y);
-    void setCell(int x, int y, CELL value);
-    void display(); // Add this function
-
+    CELL getCell(int x, int y) const;
+    void setCell(int x, int y, const CELL& value);
+    void setCell(int x, int y, char attribute);
 private:
     CELL map[BORDER][BORDER];
 };

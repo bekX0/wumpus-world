@@ -4,40 +4,42 @@
 World::World() {
     for (int i = 0; i < BORDER; ++i) {
         for (int j = 0; j < BORDER; ++j) {
-            map[i][j] = EMPTY; // Initialize with empty cells
+            map[i][j] = {false, false, false, false, false, false, false, false}; // Initialize with empty cells
         }
     }
 }
 
-CELL World::getCell(int x, int y) {
+CELL World::getCell(int x, int y) const {
     return map[x][y];
 }
 
-void World::setCell(int x, int y, CELL value) {
-    map[x][y] = value;
+void World::setCell(int x, int y, const CELL& value) {
+    if(map[x][y].hasCreated == false){
+        map[x][y] = value;
+        map[x][y].hasCreated = true;
+    }
 }
 
-void World::display() {
-    for (int i = 0; i < BORDER; ++i) {
-        for (int j = 0; j < BORDER; ++j) {
-            switch (map[i][j]) {
-                case EMPTY:
-                    std::cout << ".";
-                    break;
-                case GOLD:
-                    std::cout << "G";
-                    break;
-                case WUMPUS:
-                    std::cout << "W";
-                    break;
-                case PIT:
-                    std::cout << "P";
-                    break;
-                default:
-                    std::cout << "?";
-                    break;
-            }
+void World::setCell(int x, int y, char attribute) {
+    if(y<=BORDER-1 && y>=0 && x>=0 && x<=BORDER-1){
+        switch (attribute)
+        {
+        case 'B':
+            map[x][y].hasBreeze = true;
+            break;
+        case 'S':
+            map[x][y].hasStench = true;
+            break;
+        case 'G':
+            map[x][y].hasGlitter = true;
+            break;
+        
+        default:
+            std::cout << "Unwritten letter in setCell" << std::endl;
+            break;
         }
-        std::cout << std::endl;
+    }
+    else{
+        //I crashed to wall dude sorry.
     }
 }
