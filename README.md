@@ -1,3 +1,4 @@
 # Wumpus World AI Project
 ### Introduction
 This project implements the Wumpus World environment using C++ and integrates an AI agent with a knowledge base to navigate and survive in the world. The Wumpus World is a classic problem in artificial intelligence, often used to illustrate logical reasoning and decision-making in uncertain environments.
+At the conclusion of the project, the Wumpus World is generated randomly within predefined boundaries using parameters that enhance the game's playability. The agent navigates this world based on its own decisions, predicting adjacent cells by considering the known cells that it has either learned or previously predicted. A known issue is that if the world is not entirely playable, the agent may either die or become stuck in a loop within the safe cells.
