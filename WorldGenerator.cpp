@@ -148,9 +148,9 @@ void WorldGenerator::displayWorld(std::vector<std::pair<int, int>> path){
     std::vector<std::vector<int>> map(BORDER, std::vector<int>(BORDER, 0));
     int size = path.size();
     for(int i = size-1 ; i>=0; --i){
-         map[path[i].first][path[i].second] = size--;
+         map[path[i].first][path[i].second] = size-i;
     }
-
+    std::cout << "Safe path is:" << std::endl;
     for (int i = 0; i < BORDER; ++i) {
         for (int j = 0; j < BORDER; ++j) {
             std::cout << "[" << map[i][j] << "] ";
@@ -182,10 +182,10 @@ void WorldGenerator::safePath(World& world) {
     std::pair<int, int> locCurrent = std::make_pair(0, 0);
     stack.push(locCurrent);
     std::vector<int> compass = {1, 2, 3, 4};
-    int ctr = 0;
+
     bool isStuck = false;
     while (true) {
-        std::cout << "Current cell : (" << locCurrent.first << locCurrent.second << ")" << "compğass:" << compass[0] << compass[1] << compass[2] << compass[3] << "denemeler >=> "<< ctr<< std::endl;
+        std::cout << "Current cell : (" << locCurrent.first << locCurrent.second << ")" << std::endl;
         if (locCurrent.first == locGold.first && locCurrent.second == locGold.second) {
             std::cout << "Gold found!" << std::endl;
             break;
@@ -202,7 +202,6 @@ void WorldGenerator::safePath(World& world) {
             }
             direction = generateRandomDirection(compass);
             changeCompass(compass, direction);
-            ctr++;
         } while (!isWayValid(visited, visiting, nextCell(locCurrent, direction)));
 
         if (isStuck) {

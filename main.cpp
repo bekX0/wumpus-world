@@ -2,6 +2,9 @@
 #include "World.h"
 #include "WorldGenerator.h"
 #include "Agent.h"
+#include "World.cpp"
+#include "WorldGenerator.cpp"
+#include "Agent.cpp"
 
 void printWorld(const World& world) {
     for (int i = 0; i < BORDER; ++i) {

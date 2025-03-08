@@ -28,14 +28,14 @@ std::pair<int, int> Agent::decisionMaker(std::vector<std::pair<AGENTCELL, char>>
         score = -1000000;
         Cell_and_Score.clear();
         indexof_maxs.clear();
-        for(int i=0; i<Cell_and_Direction.size(); ++i)
+        for(int i=0; i<(int)Cell_and_Direction.size(); ++i)
         {
             cell = Cell_and_Direction[i].first;
             score = decisionScore(cell);
             Cell_and_Score.emplace_back(cell, score);
         }
 
-        for(int l=0; l<Cell_and_Score.size(); l++)
+        for(int l=0; l<(int)Cell_and_Score.size(); l++)
         {
             if(Cell_and_Score[l].second > max)
             {
@@ -53,7 +53,7 @@ std::pair<int, int> Agent::decisionMaker(std::vector<std::pair<AGENTCELL, char>>
         }
         if(indexof_maxs.size()>1)
         {
-            for(int j=0; j<indexof_maxs.size(); j++) //check cells that has same max score
+            for(int j=0; j<(int)indexof_maxs.size(); j++) //check cells that has same max score
             {
                 if(Cell_and_Score[indexof_maxs[j]].first.isRecentlyVisited == true) //if there is a cell that is recently visited
                 {
@@ -74,7 +74,7 @@ std::pair<int, int> Agent::decisionMaker(std::vector<std::pair<AGENTCELL, char>>
         }
         else if(cell.isRecentlyVisited == true && stress <= 0) //if Agent deciede to go a Cell that RecentlyVisited but don't have stress
         {
-            for(int k=0; k<Cell_and_Direction.size(); ++k)
+            for(int k=0; k<(int)Cell_and_Direction.size(); ++k)
             {
                 if(Cell_and_Direction[k].first.hasPit <= 0 && Cell_and_Direction[k].first.hasWumpus <= 0 && k != index_max) //if there is another Cell that has no Pit and Wumpus and is not the decieded one
                 {   
@@ -361,6 +361,7 @@ void Agent::movement(int x, int y, World world)
     std::pair<int, int> coordinates;
     std::vector<std::pair<int, int>> path;
     CELL choosen_cell;
+    std::pair<AGENTCELL, int> loop_detector;
     path.emplace_back(cord_x,cord_y); //Current CELL before moving
     while(getCurrentCell().hasGold < 1)
     {   
@@ -396,6 +397,25 @@ void Agent::movement(int x, int y, World world)
         }
 
         std::cout << "I am at x: " << cord_x << " y: " << cord_y << std::endl;
+        std::cout << "My map is: " << std::endl;
+        for (int i = 0; i < BORDER; ++i) {
+            for (int j = 0; j < BORDER; ++j) {
+                AGENTCELL cell = KnownCells[i][j];
+                std::cout << "[";
+                // if (cell.hasStench) std::cout << "S";
+                // if (cell.hasBreeze) std::cout << "B";
+                // if (cell.hasGlitter) std::cout << "G";
+                if (cell.hasGold == 1) std::cout << "G";
+                else if (cell.hasGold== 0) std::cout << "<G>";
+                if (cell.hasWumpus == 1) std::cout << "W";
+                else if (cell.hasWumpus == 0) std::cout << "<w>";
+                if (cell.hasPit == 1) std::cout << "P";
+                else if (cell.hasPit == 0) std::cout << "<p>";
+                std::cout << " ]";
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
         KnownCells[cord_x][cord_y].isRecentlyVisited=true; //Sets current CELL as RecentlyVisited 
         coordinates = decisionMaker(Cell_and_Direction, cord_x, cord_y); //Decides upcoming CELL's coordinates
         cord_x = coordinates.first;
@@ -406,9 +426,9 @@ void Agent::movement(int x, int y, World world)
         path.emplace_back(cord_x,cord_y); 
         if(path.size()>2) //if Agent passed at least 2 Cell
         {
-            if(cord_x != path[path.size()-3].first && cord_y != path[path.size()-3].second) //if new
+            if(cord_x != path[path.size()-3].first && cord_y != path[path.size()-3].second) //if the Cell is not the current Cell
             {
-                KnownCells[path[path.size()-3].first][path[path.size()-3].second].isRecentlyVisited = false; //Sets CELL that 2 steps behind the current in PATH as not RecentlyVisited
+                KnownCells[path[path.size()-3].first][path[path.size()-3].second].isRecentlyVisited = false; //Sets the CELL as not RecentlyVisited
             }
         }
         std::cout << "I moved to x: " << cord_x << " y: " << cord_y << std::endl;
